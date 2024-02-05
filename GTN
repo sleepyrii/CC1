@@ -1,0 +1,75 @@
+import simplegui
+import random
+import math
+
+# Initialize global variables
+num_range = 0
+rem_guess = 0
+number = 0
+user_num = 0
+
+# Define helper functions
+def new_game():
+    global num_range, rem_guess, number
+    rem_guess = math.ceil(math.log(num_range, 2))
+    number = random.randrange(0, num_range)
+    
+    print("New game. Range is from 0 to", num_range)
+    print("Number of remaining guesses is", rem_guess, "\n")
+
+def range100():
+    global num_range
+    num_range = 100
+    new_game()
+
+def range1000():
+    global num_range
+    num_range = 1000
+    new_game()
+
+def input_guess(guess):
+    global user_num, rem_guess
+    
+    # Exception handling for non-numeric input
+    try:
+        user_num = int(guess)
+    except ValueError:
+        print("'%s' - You entered invalid characters!\n" % guess)
+        return
+    
+    # Range checking
+    if user_num < 0 or user_num >= num_range:
+        print("You entered a number out of range!\n")
+        return
+    
+    rem_guess -= 1
+    
+    print("Guess was", user_num)
+    print("Number of remaining guesses is", rem_guess)
+    
+    if rem_guess > 0:
+        if number == user_num:
+            print("Correct!\n")
+            new_game()
+        elif number > user_num:
+            print("Higher!\n")
+        else:
+            print("Lower!\n")
+    else:
+        if number == user_num:
+            print("Correct!\n")
+        else:
+            print("You ran out of guesses. The number was", number, "\n")
+        new_game()
+
+# Create frame
+frame = simplegui.create_frame("Guess the number", 200, 200)
+
+# Register event handlers for control elements
+frame.add_button("Range is [0, 100)", range100, 200)
+frame.add_button("Range is [0, 1000)", range1000, 200)
+frame.add_input("Enter a guess", input_guess, 200)
+
+# Start the frame
+range100()
+frame.start()
